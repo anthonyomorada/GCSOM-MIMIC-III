@@ -1,6 +1,6 @@
 -- This query is for the Mechanical Ventilator Model Study
 -- The aim of this query is to pivot entries related to blood gases and
--- chemistry values which were found in LABEVENTS
+-- chemistry values which were found in 
 
 DROP MATERIALIZED VIEW IF EXISTS pivoted_bg CASCADE;
 CREATE MATERIALIZED VIEW pivoted_bg as
@@ -12,7 +12,7 @@ with i as
     subject_id, icustay_id, intime, outtime
     , lag (outtime) over (partition by subject_id order by intime) as outtime_lag
     , lead (intime) over (partition by subject_id order by intime) as intime_lead
-  from icustays
+  mimiciii.icustays
 )
 , iid_assign as
 (
@@ -83,7 +83,7 @@ with i as
            -- conservative upper limit
         else valuenum
         end as valuenum
-    from labevents le
+    from mimiciii.labevents le
     where le.ITEMID in
     -- blood gases
     (
@@ -144,7 +144,7 @@ with stg_spo2 as
   select HADM_ID, CHARTTIME
     -- avg here is just used to group SpO2 by charttime
     , avg(valuenum) as SpO2
-  from CHARTEVENTS
+  from mimiciii.CHARTEVENTS
   -- o2 sat
   where ITEMID in
   (
@@ -178,7 +178,7 @@ with stg_spo2 as
             then valuenum * 100
       else null end
     ) as fio2_chartevents
-  from CHARTEVENTS
+  from mimiciii.CHARTEVENTS
   where ITEMID in
   (
     3420 -- FiO2
