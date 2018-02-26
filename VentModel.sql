@@ -12,7 +12,7 @@ with i as
     subject_id, icustay_id, intime, outtime
     , lag (outtime) over (partition by subject_id order by intime) as outtime_lag
     , lead (intime) over (partition by subject_id order by intime) as intime_lead
-  mimiciii.icustays
+  from mimiciii.icustays
 )
 , iid_assign as
 (
@@ -129,7 +129,7 @@ with i as
 select
   iid.icustay_id, grp.*
 from grp
-inner join admissions adm
+inner join mimiciii.admissions adm
   on grp.hadm_id = adm.hadm_id
 left join iid_assign iid
   on adm.subject_id = iid.subject_id
