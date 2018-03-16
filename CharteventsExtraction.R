@@ -1,7 +1,3 @@
-#set your working directory using you address
-
-setwd("C:/Users/garri/Desktop/R scripts")
-
 #read in dataframe
 chartevents= read.csv("CHARTEVENTS.CSV")
 
